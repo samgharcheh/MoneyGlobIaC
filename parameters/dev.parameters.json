@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "eastus"
+        },
+        "ownerName": {
+            "value": "devOwner"
+        },
+        "resourceGroupName": {
+            "value": "devResourceGroup"
+        },
+        "storageAccountName": {
+            "value": "devstorageaccount"
+        },
+        "functionAppName": {
+            "value": "devfunctionapp"
+        },
+        "appInsightsName": {
+            "value": "devappinsights"
+        },
+        "keyVaultName": {
+            "value": "devkeyvault"
+        },
+        "secretName": {
+            "value": "devSecret"
+        },
+        "tags": {
+            "value": {
+                "Environment": "dev",
+                "Project": "MoneyGlobProject",
+                "Owner": "MoneyGlob",
+                "Department": "IT"
+            }
+        }
+    }
+}
