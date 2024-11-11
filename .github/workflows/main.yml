@@ -23,6 +23,8 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+          inlineScript: |
+            echo "Logged in to Azure"
 
       - name: Set environment variables
         run: |
