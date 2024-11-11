@@ -1,1 +1,2 @@
-# MoneyGlobIAC
+# MoneyGlob project
+##Infrastructure as Code
