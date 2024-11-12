@@ -25,15 +25,14 @@ jobs:
         run: |
           echo "RESOURCE_GROUP_NAME=${{ matrix.environment }}-rg-${{ vars.OWNER_NAME }}" >> $GITHUB_ENV
           echo "PARAMETER_FILE=parameters/${{ matrix.environment }}.parameters.json" >> $GITHUB_ENV
-          echo $GITHUB_ENV
 
-      # - name: Set up Azure CLI
-      #   uses: azure/cli@v2
-      #   with:
-      #     azcliversion: latest
-      #     inlineScript: |
-      #       az account show
-      #       az storage -h
+      - name: Set up Azure CLI
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
+            az storage -h
 
       # - name: Create resource group with tags
       #   run: |
