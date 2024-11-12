@@ -15,7 +15,7 @@ jobs:
     steps:
 
       - name: show AZURE_CREDENTIALS
-        run: echo ${{ secrets.AZURE_CREDENTIALS }}
+        run: echo "HELLO SAM"
       # - name: Checkout code
       #   uses: actions/checkout@v2
 
