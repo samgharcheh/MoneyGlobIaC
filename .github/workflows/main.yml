@@ -23,7 +23,7 @@ jobs:
           
       - name: Set environment variables
         run: |
-          echo "RESOURCE_GROUP_NAME=${{ matrix.environment }}-rg-${{ variables.OWNER_NAME || 'default_owner' }}" >> $GITHUB_ENV
+          echo "RESOURCE_GROUP_NAME=${{ matrix.environment }}-rg-${{ $OWNER_NAME || 'default_owner' }}" >> $GITHUB_ENV
           echo "PARAMETER_FILE=parameters/${{ matrix.environment }}.parameters.json" >> $GITHUB_ENV
           echo $GITHUB_ENV
 
