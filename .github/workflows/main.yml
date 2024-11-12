@@ -15,7 +15,9 @@ jobs:
     steps:
 
       - name: show AZURE_CREDENTIALS
-        run: echo "HELLO SAM"
+        run: |
+            echo "First output"
+            echo "Second output"
       # - name: Checkout code
       #   uses: actions/checkout@v2
 
