@@ -1,10 +1,7 @@
-name: Deploy Azure Infrastructure
+name: Deploy Azure Function App
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -16,18 +13,49 @@ jobs:
         environment: [dev, prod]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Azure Login
-        uses: azure/login@v1
+      - name: Login to Azure
+        uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy Bicep template
-        uses: azure/CLI@v1
+      - name: Set environment variables
+        run: |
+          echo "RESOURCE_GROUP_NAME=$${{ vars.OWNER_NAME }}-{{ matrix.environment }}-rg" >> $GITHUB_ENV
+          echo "PARAMETER_FILE=parameters/${{ matrix.environment }}.parameters.json" > $GITHUB_ENV
+
+      - name: Set up Azure CLI
+        uses: azure/cli@v2
         with:
+          azcliversion: latest
           inlineScript: |
-            az deployment group create \
-              --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
-              --template-file bicep/main.bicep \
-              --parameters ${{ matrix.environment }}.parameters.json
+            az account show
+            az group create --name $RESOURCE_GROUP_NAME --location eastus --tags Environment=${{ matrix.environment }} Project=MyProject Owner=${{ secrets.OWNER_NAME || 'default_owner' }} Department=IT
+            az deployment group create --resource-group $RESOURCE_GROUP_NAME --template-file bicep/main.bicep --parameters bicep/${{ matrix.environment }}.parameters.bicep
+
+      # - name: Create resource group with tags
+      #   run: |
+      #     az group create --name $RESOURCE_GROUP_NAME --location eastus --tags Environment=${{ matrix.environment }} Project=MyProject Owner=${{ secrets.OWNER_NAME || 'default_owner' }} Department=IT
+
+      # - name: Deploy Bicep file
+      #   run: |
+      #     az deployment group create --resource-group $RESOURCE_GROUP_NAME --template-file bicep/main.bicep --parameters @${{ matrix.environment }}.parameters.json
+
+      # - name: Get Function App Principal ID
+      #   id: getPrincipalId
+      #   run: |
+      #     principalId=$(az webapp show --resource-group $RESOURCE_GROUP_NAME --name ${{ secrets.FUNCTION_APP_NAME || 'default_function_app' }} --query identity.principalId --output tsv)
+      #     echo "FUNCTION_APP_PRINCIPAL_ID=$principalId" >> $GITHUB_ENV
+
+      # - name: Update Key Vault Access Policy
+      #   run: |
+      #     az deployment group create --resource-group $RESOURCE_GROUP_NAME --template-file bicep/updateKeyVault.bicep --parameters keyVaultName=${{ secrets.KEY_VAULT_NAME }} functionAppPrincipalId=$FUNCTION_APP_PRINCIPAL_ID
+
+      # - name: Deploy Function App
+      #   uses: azure/functions-action@v1
+      #   with:
+      #     app-name: ${{ secrets.FUNCTION_APP_NAME || 'default_function_app' }}
+      #     package: src/function-app/
+      #     publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE || 'default_publish_profile' }}
