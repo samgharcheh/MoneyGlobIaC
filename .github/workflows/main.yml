@@ -33,5 +33,5 @@ jobs:
           azcliversion: latest
           inlineScript: |
             az account show
-            az group create --location westeurope --resource-group $RESOURCE_GROUP_NAME 
+            az group create --location westeurope --resource-group monyglob-dev-rg
             az deployment group create --resource-group $RESOURCE_GROUP_NAME --template-file bicep/main.bicep --parameters bicep/${{ matrix.environment }}.parameters.bicep
