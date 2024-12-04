@@ -5,6 +5,7 @@ param functionAppName string
 param appInsightsName string
 param keyVaultName string
 param secretName string
+param hostingPlanName string
 
 var prefixedStorageAccountName = '${ownerName}${storageAccountName}'
 var prefixedFunctionAppName = '${ownerName}${functionAppName}'
@@ -51,20 +52,57 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   }
 }
 
-resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
+// Add hosting plan resource (required for isolated process)
+resource hostingPlan 'Microsoft.Web/serverfarms@2023-01-01' = {
+  name: '${ownerName}${hostingPlanName}'
+  location: location
+  sku: {
+    name: 'Y1' // Y1 is for Consumption plan. Use other SKUs like P1v3 for Premium
+    tier: 'Dynamic'
+  }
+  properties: {
+    reserved: true // Required for Linux
+  }
+}
+
+// Update the function app resource
+resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
   name: prefixedFunctionAppName
   location: location
-  kind: 'functionapp'
+  kind: 'functionapp,linux'
   identity: {
     type: 'SystemAssigned'
   }
   properties: {
-    serverFarmId: 'Consumption'
+    serverFarmId: hostingPlan.id
     siteConfig: {
+      linuxFxVersion: 'DOTNET-ISOLATED|8.0'
+      numberOfWorkers: 1
+      acrUseManagedIdentityCreds: false
+      alwaysOn: false
+      http20Enabled: true
+      functionAppScaleLimit: 200
+      minimumElasticInstanceCount: 0
       appSettings: [
         {
+          name: 'FUNCTIONS_EXTENSION_VERSION'
+          value: '~4'
+        }
+        {
+          name: 'FUNCTIONS_WORKER_RUNTIME'
+          value: 'dotnet-isolated'
+        }
+        {
           name: 'AzureWebJobsStorage'
-          value: storageAccount.properties.primaryEndpoints.blob
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+        }
+        {
+          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+        }
+        {
+          name: 'WEBSITE_CONTENTSHARE'
+          value: toLower(prefixedFunctionAppName)
         }
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -80,5 +118,6 @@ resource functionApp 'Microsoft.Web/sites@2024-04-01' = {
         }
       ]
     }
+    httpsOnly: true
   }
 }
