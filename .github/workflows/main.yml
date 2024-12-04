@@ -33,7 +33,7 @@ jobs:
           azcliversion: latest
           inlineScript: |
             az account show
-            az group create --name $RESOURCE_GROUP_NAME --location eastus --tags Environment=${{ matrix.environment }} Project=MyProject Owner=${{ secrets.OWNER_NAME || 'default_owner' }} Department=IT
+            az group create --name $RESOURCE_GROUP_NAME --location eastus --tags Environment=${{ matrix.environment }} Project=MyProject Owner=${{ vars.OWNER_NAME }} Department=IT
             az deployment group create --resource-group $RESOURCE_GROUP_NAME --template-file bicep/main.bicep --parameters bicep/${{ matrix.environment }}.parameters.bicep
 
       # - name: Create resource group with tags
