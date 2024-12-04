@@ -1,6 +1,7 @@
 name: Deploy Azure Function App
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -10,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: [dev, prod]
+        environment: [dev]
 
     steps:
       - name: Checkout code
