@@ -33,4 +33,4 @@ jobs:
           azcliversion: latest
           inlineScript: |
             az account show
-            az group create --location westeurope --resource-group ${{ env.RESOURCE_GROUP_NAME }}
+            az group create --location westeurope --resource-group ${{ RESOURCE_GROUP_NAME }}
