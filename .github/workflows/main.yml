@@ -1,4 +1,4 @@
-name: Deploy Azure Function App
+name: Deploy Azure Resources
 
 on:
   workflow_dispatch:
@@ -26,11 +26,19 @@ jobs:
         run: |
           echo "RESOURCE_GROUP_NAME=${{ vars.OWNER_NAME }}-{{ matrix.environment }}-rg" >> $GITHUB_ENV
           echo "PARAMETER_FILE=parameters/${{ matrix.environment }}.parameters.json" >> $GITHUB_ENV
-
-      - name: Set up Azure CLI
+          echo $GITHUB_ENV
+      - name: Azure CLI script
         uses: azure/cli@v2
         with:
-          azcliversion: latest
+          azcliversion: 2.30.0
           inlineScript: |
             az account show
-            az group create --location westeurope --resource-group ${{ vars.OWNER_NAME }}-{{ matrix.environment }}-rg
+
+      - name: Deploy Bicep template
+        env:
+          RESOURCE_GROUP_NAME: ${{ secrets.RESOURCE_GROUP_NAME }}
+        run: |
+          az deployment group create \
+            --resource-group $RESOURCE_GROUP_NAME \
+            --template-file ./bicep/main.bicep \
+            --parameters @bicep/${{ matrix.environment }}.parameters.bicep

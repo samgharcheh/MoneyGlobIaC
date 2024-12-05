@@ -1,5 +1,5 @@
 param location string = resourceGroup().location
-param functionAppName string
+param functionAppName string = 
 param storageAccountName string
 param appServicePlanName string
 
