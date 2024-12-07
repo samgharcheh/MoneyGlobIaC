@@ -2,7 +2,7 @@ param prefixName string = 'moneyGlob'
 param envName string = 'dev'
 param location string = resourceGroup().location
 param functionAppName string = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(resourceGroup().id)}-func'
-param storageAccountName string = '${toLower(prefixName)}-${toLower(envName)}-xyzt-sa'
+param storageAccountName string = '${toLower(prefixName)}${toLower(envName)}sa'
 param appServicePlanName string = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(resourceGroup().id)}-asp'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
