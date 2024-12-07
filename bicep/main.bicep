@@ -19,6 +19,14 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   }
 }
 
+// Blob Storage Container
+resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-05-01' = {
+  name: '${storageAccount.name}/default/gen-pic-container'
+  properties: {
+    publicAccess: 'None'
+  }
+}
+
 // App Service Plan (Linux)
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
@@ -55,20 +63,7 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: 'dotnet-isolated'
         }
-        {
-          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
-        }
-        {
-          name: 'WEBSITE_CONTENTSHARE'
-          value: toLower(functionAppName)
-        }
       ]
-      ftpsState: 'Disabled'
-      minTlsVersion: '1.2'
     }
-    httpsOnly: true
   }
 }
-
-output functionAppHostName string = functionApp.properties.defaultHostName
