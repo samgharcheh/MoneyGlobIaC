@@ -32,6 +32,11 @@ resource TableStorage 'Microsoft.Storage/storageAccounts/tableServices/tables@20
   name: '${storageAccount.name}/default/PriceData'
 }
 
+// Queue Storage  (Optional)
+resource QueueStorage 'Microsoft.Storage/storageAccounts/queueServices/queues@2022-05-01' = {
+  name: '${storageAccount.name}/default/PriceDataQueue'
+}
+
 // App Service Plan (Linux)
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
