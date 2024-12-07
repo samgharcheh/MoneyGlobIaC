@@ -42,5 +42,5 @@ jobs:
           az group create -l westus -n $RESOURCE_GROUP_NAME
           az deployment group create \
             --resource-group $RESOURCE_GROUP_NAME \
-            --template-file ./bicep/main.bicep \
-            --parameters @bicep/${{ matrix.environment }}.parameters.bicep
+            --name $RESOURCE_GROUP_NAME \
+            --template-file ./bicep/main.bicep
