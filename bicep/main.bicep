@@ -5,6 +5,7 @@ param functionAppName string = '${toLower(prefixName)}-${toLower(envName)}-${uni
 param storageAccountName string = '${toLower(prefixName)}${toLower(envName)}sa'
 param appServicePlanName string = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(resourceGroup().id)}-asp'
 
+// Storage Account for Function App
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   name: storageAccountName
   location: location
@@ -18,33 +19,19 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   }
 }
 
-// // Storage Account for Function App
-// resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-//   name: storageAccountName
-//   location: location
-//   sku: {
-//     name: 'Standard_LRS'
-//   }
-//   kind: 'StorageV2'
-//   properties: {
-//     supportsHttpsTrafficOnly: true
-//     minimumTlsVersion: 'TLS1_2'
-//   }
-// }
-
-// // App Service Plan (Linux)
-// resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
-//   name: appServicePlanName
-//   location: location
-//   sku: {
-//     name: 'Y1' // Consumption plan
-//     tier: 'Dynamic'
-//   }
-//   kind: 'linux'
-//   properties: {
-//     reserved: true // Required for Linux
-//   }
-// }
+// App Service Plan (Linux)
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
+  name: appServicePlanName
+  location: location
+  sku: {
+    name: 'Y1' // Consumption plan
+    tier: 'Dynamic'
+  }
+  kind: 'linux'
+  properties: {
+    reserved: true // Required for Linux
+  }
+}
 
 // // Function App
 // resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
