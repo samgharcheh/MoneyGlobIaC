@@ -21,7 +21,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
 
 // Blob Storage Container
 resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-05-01' = {
-  name: 'gen-pic-container'
+  name: 'moneyGlob-pic-container'
   parent: storageAccount
   properties: {
     publicAccess: 'None'
@@ -30,13 +30,13 @@ resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/container
 
 // Table Storage
 resource TableStorage 'Microsoft.Storage/storageAccounts/tableServices/tables@2022-05-01' = {
-  name: 'PriceData'
+  name: 'moneyGlobPriceData'
   parent: storageAccount
 }
 
 // Queue Storage  (Optional)
 resource QueueStorage 'Microsoft.Storage/storageAccounts/queueServices/queues@2022-05-01' = {
-  name: 'PriceDataQueue'
+  name: 'moneyGlobPriceDataQueue'
   parent: storageAccount
 }
 
