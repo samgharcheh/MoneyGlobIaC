@@ -40,7 +40,7 @@ jobs:
         run: |
           echo "Deploying to $RESOURCE_GROUP_NAME"
           az group create -l westus -n $RESOURCE_GROUP_NAME
-          # az deployment group create \
-          #   --resource-group $RESOURCE_GROUP_NAME \
-          #   --template-file ./bicep/main.bicep \
-          #   --parameters @bicep/${{ matrix.environment }}.parameters.bicep
+          az deployment group create \
+            --resource-group $RESOURCE_GROUP_NAME \
+            --template-file ./bicep/main.bicep \
+            --parameters @bicep/${{ matrix.environment }}.parameters.bicep
