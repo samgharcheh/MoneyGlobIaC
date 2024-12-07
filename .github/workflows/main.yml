@@ -24,9 +24,9 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "RESOURCE_GROUP_NAME=${{ vars.OWNER_NAME }}-{{ matrix.environment }}-rg" >> $GITHUB_ENV
+          echo "RESOURCE_GROUP_NAME=${{ vars.OWNER_NAME }}-${{ matrix.environment }}-rg" >> $GITHUB_ENV
           echo "PARAMETER_FILE=parameters/${{ matrix.environment }}.parameters.json" >> $GITHUB_ENV
-          echo $GITHUB_ENV
+          echo ${{vars.RESOURCE_GROUP_NAME}}
       - name: Azure CLI script
         uses: azure/cli@v2
         with:
@@ -36,10 +36,11 @@ jobs:
 
       - name: Deploy Bicep template
         env:
-          RESOURCE_GROUP_NAME: "${{ vars.OWNER_NAME }}-{{ matrix.environment }}-rg"
+          RESOURCE_GROUP_NAME: "${{ vars.OWNER_NAME }}-${{ matrix.environment }}-rg"
         run: |
           echo "Deploying to $RESOURCE_GROUP_NAME"
-          az deployment group create \
-            --resource-group $RESOURCE_GROUP_NAME \
-            --template-file ./bicep/main.bicep \
-            --parameters @bicep/${{ matrix.environment }}.parameters.bicep
+          az group create -l westus -n $RESOURCE_GROUP_NAME
+          # az deployment group create \
+          #   --resource-group $RESOURCE_GROUP_NAME \
+          #   --template-file ./bicep/main.bicep \
+          #   --parameters @bicep/${{ matrix.environment }}.parameters.bicep
