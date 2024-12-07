@@ -36,7 +36,7 @@ resource TableStorage 'Microsoft.Storage/storageAccounts/tableServices/tables@20
 
 // Queue Storage  (Optional)
 resource QueueStorage 'Microsoft.Storage/storageAccounts/queueServices/queues@2022-05-01' = {
-  name: 'moneyglobpricedataqueue'
+  name: 'moneyglobpricedata'
   parent: storageAccount
 }
 
