@@ -4,12 +4,22 @@ param location string = resourceGroup().location
 param functionAppName string = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(resourceGroup().id)}-func'
 param storageAccountName string = '${toLower(prefixName)}${toLower(envName)}sa'
 param appServicePlanName string = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(resourceGroup().id)}-asp'
-param appInsightsName string = '${toLower(prefixName)}-${toLower(envName)}-ai'
+param appInsightsName string = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(resourceGroup().id)}-ai'
+param tags object = {
+  Environment: '${envName}'
+  Project: 'MoneyGlobProject'
+  Owner: 'MoneyGlob'
+  Department: 'IT'
+}
+param blobStorageContainerNames array = [ 'moneyglobpiccontainer' ]
+param tableStorageNames array = [ 'moneyglobpricedatatable' ]
+param queueStorageNames array = [ 'moneyglobpricedataqueue' ]
 
 // Storage Account for Function App
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   name: storageAccountName
   location: location
+  tags: tags
   sku: {
     name: 'Standard_LRS'
   }
@@ -27,13 +37,10 @@ resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2022-05-01'
 }
 
 // Blob Storage Container
-resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-05-01' = {
-  name: 'moneyglobpiccontainer' // Updated to remove invalid characters
+resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-05-01' = [for containerName in blobStorageContainerNames: {
+  name: containerName
   parent: blobService
-  properties: {
-    publicAccess: 'None'
-  }
-}
+}]
 
 // Table Service
 resource tableService 'Microsoft.Storage/storageAccounts/tableServices@2022-05-01' = {
@@ -42,10 +49,10 @@ resource tableService 'Microsoft.Storage/storageAccounts/tableServices@2022-05-0
 }
 
 // Table Storage
-resource tableStorage 'Microsoft.Storage/storageAccounts/tableServices/tables@2022-05-01' = {
-  name: 'moneyglobpricedataqueue' // Updated to remove invalid characters
+resource tableStorage 'Microsoft.Storage/storageAccounts/tableServices/tables@2022-05-01' = [for tableName in tableStorageNames: {
+  name: tableName
   parent: tableService
-}
+}]
 
 // Queue Service
 resource queueService 'Microsoft.Storage/storageAccounts/queueServices@2022-05-01' = {
@@ -54,15 +61,16 @@ resource queueService 'Microsoft.Storage/storageAccounts/queueServices@2022-05-0
 }
 
 // Queue Storage  (Optional)
-resource QueueStorage 'Microsoft.Storage/storageAccounts/queueServices/queues@2022-05-01' = {
-  name: 'moneyglobpricedata' // Updated to remove invalid characters
+resource QueueStorage 'Microsoft.Storage/storageAccounts/queueServices/queues@2022-05-01' = [for queueName in queueStorageNames: {
+  name: queueName
   parent: queueService
-}
+}]
 
 // Application Insights
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: appInsightsName
   location: location
+  tags: tags
   kind: 'web'
   properties: {
     Application_Type: 'web'
@@ -73,6 +81,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
   location: location
+  tags: tags
   sku: {
     name: 'Y1' // Consumption plan
     tier: 'Dynamic'
@@ -87,6 +96,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
 resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
   name: functionAppName
   location: location
+  tags: tags
   kind: 'functionapp,linux'
   properties: {
     serverFarmId: appServicePlan.id
@@ -113,3 +123,5 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
     }
   }
 }
+
+output functionAppName string = functionApp.properties.defaultHostName
