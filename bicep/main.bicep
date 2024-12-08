@@ -30,7 +30,7 @@ resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/container
 
 // Table Storage
 resource TableStorage 'Microsoft.Storage/storageAccounts/tableServices/tables@2022-05-01' = {
-  name: 'moneyGlobPriceData'
+  name: 'moneyglob-price-data-queue'
   parent: storageAccount
 }
 
