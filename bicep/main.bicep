@@ -28,7 +28,7 @@ resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2022-05-01'
 
 // Blob Storage Container
 resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-05-01' = {
-  name: 'moneyGlob-pic-container'
+  name: 'moneyglobpiccontainer' // Updated to remove invalid characters
   parent: blobService
   properties: {
     publicAccess: 'None'
@@ -42,8 +42,8 @@ resource tableService 'Microsoft.Storage/storageAccounts/tableServices@2022-05-0
 }
 
 // Table Storage
-resource TableStorage 'Microsoft.Storage/storageAccounts/tableServices/tables@2022-05-01' = {
-  name: 'moneyglob-price-data-queue'
+resource tableStorage 'Microsoft.Storage/storageAccounts/tableServices/tables@2022-05-01' = {
+  name: 'moneyglobpricedataqueue' // Updated to remove invalid characters
   parent: tableService
 }
 
@@ -55,7 +55,7 @@ resource queueService 'Microsoft.Storage/storageAccounts/queueServices@2022-05-0
 
 // Queue Storage  (Optional)
 resource QueueStorage 'Microsoft.Storage/storageAccounts/queueServices/queues@2022-05-01' = {
-  name: 'moneyglob-price-data'
+  name: 'moneyglobpricedata' // Updated to remove invalid characters
   parent: queueService
 }
 
