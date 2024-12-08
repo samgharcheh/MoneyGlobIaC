@@ -4,6 +4,7 @@ param location string = resourceGroup().location
 param functionAppName string = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(resourceGroup().id)}-func'
 param storageAccountName string = '${toLower(prefixName)}${toLower(envName)}sa'
 param appServicePlanName string = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(resourceGroup().id)}-asp'
+param appInsightsName string = '${toLower(prefixName)}-${toLower(envName)}-ai'
 
 // Storage Account for Function App
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
@@ -58,6 +59,16 @@ resource QueueStorage 'Microsoft.Storage/storageAccounts/queueServices/queues@20
   parent: queueService
 }
 
+// Application Insights
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: appInsightsName
+  location: location
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+  }
+}
+
 // App Service Plan (Linux)
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: appServicePlanName
@@ -93,6 +104,10 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: 'dotnet-isolated'
+        }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsights.properties.InstrumentationKey
         }
       ]
     }
