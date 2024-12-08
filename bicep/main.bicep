@@ -1,19 +1,14 @@
-param prefixName string = 'moneyGlob'
-param envName string = 'dev'
-param location string = resourceGroup().location
-param functionAppName string = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(resourceGroup().id)}-func'
-param storageAccountName string = '${toLower(prefixName)}${toLower(envName)}sa'
-param appServicePlanName string = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(resourceGroup().id)}-asp'
-param appInsightsName string = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(resourceGroup().id)}-ai'
-param tags object = {
-  Environment: '${envName}'
-  Project: 'MoneyGlobProject'
-  Owner: 'MoneyGlob'
-  Department: 'IT'
-}
-param blobStorageContainerNames array = [ 'moneyglobpiccontainer' ]
-param tableStorageNames array = [ 'moneyglobpricedatatable' ]
-param queueStorageNames array = [ 'moneyglobpricedataqueue' ]
+param prefixName string
+param envName string
+param location string
+param functionAppName string
+param storageAccountName string
+param appServicePlanName string
+param appInsightsName string
+param tags object
+param blobStorageContainerNames array
+param tableStorageNames array
+param queueStorageNames array
 
 // Storage Account for Function App
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
