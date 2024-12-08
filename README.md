@@ -7,8 +7,8 @@ Utilizes Bicep, a domain-specific language (DSL) for Azure Resource Manager, to 
 Uses GitHub Actions to automate the process of deploying infrastructure to Azure.
 Provides an efficient and reproducible way to deploy the infrastructure for the Money Globe project.
 ## Technology Stack
-Bicep
-GitHub Actions
-Azure
-License
+- Bicep
+- GitHub Actions
+- Azure
+## License
 Not specified
