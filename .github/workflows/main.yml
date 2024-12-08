@@ -44,4 +44,4 @@ jobs:
             --resource-group $RESOURCE_GROUP_NAME \
             --name $RESOURCE_GROUP_NAME \
             --template-file ./bicep/main.bicep
-            --parameters ${{ github.workspace }}/bicep/dev.parameters.bicep
+            --parameters ${{ github.workspace }}/bicep/dev.parameters.bicepparam
