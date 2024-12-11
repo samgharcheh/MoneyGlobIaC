@@ -44,5 +44,5 @@ jobs:
             --resource-group $RESOURCE_GROUP_NAME \
             --name $RESOURCE_GROUP_NAME \
             --template-file ./bicep/main.bicep \
-            --parameters @./bicep/main.bicepparam
+            --parameters @./bicep/main.parameters.json
           echo "Deployment complete"
