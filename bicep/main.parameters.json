@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "prefixName": {
+      "value": "moneyGlob"
+    },
+    "envName": {
+      "value": "dev"
+    },
+    "appInsightsName": {
+      "value": ""
+    },
+    "tags": {
+      "value": {
+        Environment: 'Development',
+        Project: 'MoneyGlobProject'
+        Owner: 'MoneyGlob'
+        Department: 'IT'
+      }
+    },
+    "blobStorageContainerNames": {
+      "value": ['moneyglobpiccontainer']
+    },
+    "tableStorageNames": {
+      "value": ['moneyglobpricedatatable']
+    },
+    "queueStorageNames": {
+      "value": ['moneyglobpricedataqueue']
+    }
+  }
+}

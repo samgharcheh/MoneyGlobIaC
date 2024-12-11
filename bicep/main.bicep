@@ -1,14 +1,31 @@
-param prefixName string
-param envName string
-param location string
-param functionAppName string
-param storageAccountName string
-param appServicePlanName string
-param appInsightsName string
-param tags object
+@description('Create a Function App with Storage Account, App Service Plan, and Application Insights')
+@minLength(3)
+@maxLength(10)
+param prefixName string 
+
+@description('Environment name for all resources. Must be between 3 and 10 characters.')
+@minLength(3)
+@maxLength(10)
+param envName string = 'dev'
+
+param location string = resourceGroup().location
+param tags object= {
+  Environment: '${envName}'
+  Project: 'MoneyGlobProject'
+  Owner: 'MoneyGlob'
+  Department: 'IT'
+}
+
 param blobStorageContainerNames array
 param tableStorageNames array
 param queueStorageNames array
+
+var functionAppName = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(location)}-func'
+var storageAccountName = take('${toLower(prefixName)}${toLower(envName)}${substring(uniqueString(location), 0, 6)}', 24)
+var appServicePlanName = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(location)}-asp'
+var appInsightsName = '${toLower(prefixName)}-${toLower(envName)}-${uniqueString(location)}-ai'
+
+
 
 // Storage Account for Function App
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
