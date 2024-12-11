@@ -1,4 +1,3 @@
-using './main.bicep'
 
 param prefixName = 'moneyGlob'
 param envName = 'dev'
