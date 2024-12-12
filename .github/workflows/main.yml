@@ -41,5 +41,9 @@ jobs:
           echo "Deploying to $RESOURCE_GROUP_NAME"
           az bicep upgrade
           az group create -l westus -n $RESOURCE_GROUP_NAME
-          az deployment group create --resource-group $RESOURCE_GROUP_NAME --name $RESOURCE_GROUP_NAME --template-file ./bicep/main.bicep --parameters ./bicep/main.bicepparam
+          az deployment group create \
+              --resource-group $RESOURCE_GROUP_NAME \
+              --name $RESOURCE_GROUP_NAME \
+              --template-file ./bicep/main.bicep \
+              --parameters ./bicep/main.bicepparam
           echo "Deployment complete"
