@@ -2,16 +2,32 @@ name: Deploy Azure Resources
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - develop
+      - feature/*
+      - hotfix/*
+      - release/*
+      - bugfix/*
+      - chore/*
   push:
     branches:
       - main
+      - develop
+      - feature/*
+      - hotfix/*
+      - release/*
+      - bugfix/*
+      - chore/*
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: [dev]
+        environment: [Development, Test, Production]
+        branch: [develop, test, main]
 
     steps:
       - name: Checkout code
@@ -22,7 +38,9 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Set environment variables
+      - name: Set environment variables - Deploy to ${{ matrix.environment }}
+        env:
+          ENVIRONMENT_NAME: ${{ matrix.environment }}
         run: |
           RESOURCE_GROUP_NAME="${{ vars.OWNER_NAME }}-${{ matrix.environment }}-rg"
           RESOURCE_GROUP_NAME_LOWER=$(echo $RESOURCE_GROUP_NAME | tr '[:upper:]' '[:lower:]')
@@ -38,7 +56,7 @@ jobs:
           inlineScript: |
             az account show
 
-      - name: Deploy Bicep template
+      - name: Deploy Bicep template - Deploy to ${{ matrix.environment }}
         env:
           RESOURCE_GROUP_NAME: ${{ env.RESOURCE_GROUP_NAME }}
           RESOURCE_GROUP_NAME_LOWER: ${{ env.RESOURCE_GROUP_NAME_LOWER }}

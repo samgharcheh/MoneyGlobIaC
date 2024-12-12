@@ -16,6 +16,60 @@ Provides an efficient and reproducible way to deploy the infrastructure for the 
 - GitHub Actions
 - Azure
 
+## Create Azure Resource Group
+
+```powershell
+az group create -g NameOfGroup -l westus3
+```
+
+## Create resource group deployment and deploy
+
+```powershell
+az deployment group create -g MyFirstDemo -f main.bicep
+```
+
+## subscription deployment
+
+```powershell
+az deployment sub create --name <deployment-name> --location <location> --template-file <path-to-bicep>
+```
+
+## management group deployments
+
+```powershell
+az deployment mg create --name <deployment-name> --management-group-id <mgid> --template-file <path-to-bicep>
+```
+
+## az build a json file
+
+```powershell
+az bicep build -f filename.bicep
+```
+
+## upgrade
+
+```powershell
+az bicep upgrade
+```
+
+## version
+
+```powershell
+az bicep version
+```
+
+## clean up - delete resource group
+
+```powershell
+az group delete --name exampleGroup
+```
+
+## azure Service principal setup
+
+```powershell
+az ad sp create-for-rbac --name "YourSPName" --role contributor --scopes /subscriptions/yourSubscriptionId
+```
+
 ## Run command
 
 ```powershell
