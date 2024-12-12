@@ -24,9 +24,13 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo "RESOURCE_GROUP_NAME=${{ vars.OWNER_NAME }}-${{ matrix.environment }}-rg" >> $GITHUB_ENV
+          RESOURCE_GROUP_NAME="${{ vars.OWNER_NAME }}-${{ matrix.environment }}-rg"
+          RESOURCE_GROUP_NAME_LOWER=$(echo $RESOURCE_GROUP_NAME | tr '[:upper:]' '[:lower:]')
+          echo "RESOURCE_GROUP_NAME=$RESOURCE_GROUP_NAME" >> $GITHUB_ENV
+          echo "RESOURCE_GROUP_NAME_LOWER=$RESOURCE_GROUP_NAME_LOWER" >> $GITHUB_ENV
           echo "PARAMETER_FILE=parameters/${{ matrix.environment }}.parameters.json" >> $GITHUB_ENV
-          echo ${{vars.RESOURCE_GROUP_NAME}}
+          echo $RESOURCE_GROUP_NAME_LOWER
+
       - name: Azure CLI script
         uses: azure/cli@v2
         with:
@@ -36,8 +40,8 @@ jobs:
 
       - name: Deploy Bicep template
         env:
-          RESOURCE_GROUP_NAME: "${{ vars.OWNER_NAME }}-${{ matrix.environment }}-rg"
-          RESOURCE_GROUP_NAME_LOWER: $(echo $RESOURCE_GROUP_NAME | tr '[:upper:]' '[:lower:]')
+          RESOURCE_GROUP_NAME: ${{ env.RESOURCE_GROUP_NAME }}
+          RESOURCE_GROUP_NAME_LOWER: ${{ env.RESOURCE_GROUP_NAME_LOWER }}
         run: |
           echo "Deploying to $RESOURCE_GROUP_NAME_LOWER"
           az bicep upgrade
