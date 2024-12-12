@@ -39,6 +39,7 @@ jobs:
           RESOURCE_GROUP_NAME: "${{ vars.OWNER_NAME }}-${{ matrix.environment }}-rg"
         run: |
           echo "Deploying to $RESOURCE_GROUP_NAME"
+          az bicep upgrade
           az group create -l westus -n $RESOURCE_GROUP_NAME
           az deployment group create \
             --resource-group $RESOURCE_GROUP_NAME \
