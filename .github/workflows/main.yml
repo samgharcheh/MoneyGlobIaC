@@ -37,13 +37,14 @@ jobs:
       - name: Deploy Bicep template
         env:
           RESOURCE_GROUP_NAME: "${{ vars.OWNER_NAME }}-${{ matrix.environment }}-rg"
+          RESOURCE_GROUP_NAME_LOWER: $(echo $RESOURCE_GROUP_NAME | tr '[:upper:]' '[:lower:]')
         run: |
-          echo "Deploying to $RESOURCE_GROUP_NAME"
+          echo "Deploying to $RESOURCE_GROUP_NAME_LOWER"
           az bicep upgrade
-          az group create -l westus -n $RESOURCE_GROUP_NAME
+          az group create -l westus -n $RESOURCE_GROUP_NAME_LOWER
           az deployment group create \
-              --resource-group $RESOURCE_GROUP_NAME \
-              --name $RESOURCE_GROUP_NAME \
+              --resource-group $RESOURCE_GROUP_NAME_LOWER \
+              --name $RESOURCE_GROUP_NAME_LOWER \
               --template-file ./bicep/main.bicep \
               --parameters ./bicep/main.bicepparam
           echo "Deployment complete"
