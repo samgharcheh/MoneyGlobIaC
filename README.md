@@ -16,6 +16,18 @@ Provides an efficient and reproducible way to deploy the infrastructure for the 
 - GitHub Actions
 - Azure
 
+## Run command
+
+```powershell
+az group create -l westus -n <ResourceGroupName>
+
+az deployment group create \
+    --resource-group <ResourceGroupName> \
+    --name <deployName> \
+    --template-file ./main.bicep \
+    --parameters parameters.bicepparam
+```
+
 ## License
 
 This project is licensed under the New Planet IT License.

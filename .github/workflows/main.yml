@@ -42,9 +42,5 @@ jobs:
           az bicep upgrade
           az bicep build --file ./main.bicep
           az group create -l westus -n $RESOURCE_GROUP_NAME
-          az deployment group create \
-            --resource-group $RESOURCE_GROUP_NAME \
-            --name $RESOURCE_GROUP_NAME \
-            --template-file ./main.json \
-            --parameters @./main.parameters.json
+          az deployment group create --resource-group $RESOURCE_GROUP_NAME --name $RESOURCE_GROUP_NAME --template-file ./main.bicep --parameters ./main.bicepparam
           echo "Deployment complete"
