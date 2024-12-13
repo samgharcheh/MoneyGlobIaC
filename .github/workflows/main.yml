@@ -28,7 +28,6 @@ jobs:
       - name: Set environment variables
         env:
           ENVIRONMENT_NAME: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'test' && 'sit' || 'dev' }}
-
         run: |
           RESOURCE_GROUP_NAME="${{ vars.OWNER_NAME }}-${{ env.ENVIRONMENT_NAME }}-rg"
           RESOURCE_GROUP_NAME_LOWER=$(echo $RESOURCE_GROUP_NAME | tr '[:upper:]' '[:lower:]')
