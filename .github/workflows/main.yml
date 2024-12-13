@@ -22,12 +22,57 @@ on:
       - chore/*
 
 jobs:
-  deploy:
+  deploy-development:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set environment variables - Deploy to Development
+        env:
+          ENVIRONMENT_NAME: Development
+        run: |
+          RESOURCE_GROUP_NAME="${{ vars.OWNER_NAME }}-development-rg"
+          RESOURCE_GROUP_NAME_LOWER=$(echo $RESOURCE_GROUP_NAME | tr '[:upper:]' '[:lower:]')
+          echo "RESOURCE_GROUP_NAME=$RESOURCE_GROUP_NAME" >> $GITHUB_ENV
+          echo "RESOURCE_GROUP_NAME_LOWER=$RESOURCE_GROUP_NAME_LOWER" >> $GITHUB_ENV
+          echo "PARAMETER_FILE=parameters/development.parameters.json" >> $GITHUB_ENV
+          echo $RESOURCE_GROUP_NAME_LOWER
+
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az account show
+
+      - name: Deploy Bicep template - Deploy to Development
+        env:
+          RESOURCE_GROUP_NAME: ${{ env.RESOURCE_GROUP_NAME }}
+          RESOURCE_GROUP_NAME_LOWER: ${{ env.RESOURCE_GROUP_NAME_LOWER }}
+        run: |
+          echo "Deploying to $RESOURCE_GROUP_NAME_LOWER"
+          az bicep upgrade
+          az group create -l westus -n $RESOURCE_GROUP_NAME_LOWER
+          az deployment group create \
+              --resource-group $RESOURCE_GROUP_NAME_LOWER \
+              --name $RESOURCE_GROUP_NAME_LOWER \
+              --template-file ./bicep/main.bicep \
+              --parameters ./bicep/main.bicepparam
+          echo "Deployment complete"
+
+  deploy-other-environments:
+    needs: deploy-development
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: [Development, Test, Production]
-        branch: [develop, test, main]
+        environment: [Test, Production]
+        branch: [test, main]
 
     steps:
       - name: Checkout code
