@@ -5,13 +5,15 @@ on:
   push:
     branches:
       - main
+      - develop
+      - testing
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        environment: [dev]
+  deploy-development:
+    runs-on:
+      ubuntu-latest
+      # Dynamically set the environment based on the branch
+    environment: ${{ github.ref_name == 'main' && 'Production' || github.ref_name == 'test' && 'Testing' || 'Development' }}
 
     steps:
       - name: Checkout code
@@ -22,13 +24,15 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Set environment variables
+      - name: Set environment variables - Deploy to ${{ env.ENVIRONMENT_NAME }}
+        env:
+          ENVIRONMENT_NAME: ${{ env.ENVIRONMENT_NAME }}
         run: |
-          RESOURCE_GROUP_NAME="${{ vars.OWNER_NAME }}-${{ matrix.environment }}-rg"
+          RESOURCE_GROUP_NAME="${{ vars.OWNER_NAME }}-${{ env.ENVIRONMENT_NAME }}-rg"
           RESOURCE_GROUP_NAME_LOWER=$(echo $RESOURCE_GROUP_NAME | tr '[:upper:]' '[:lower:]')
           echo "RESOURCE_GROUP_NAME=$RESOURCE_GROUP_NAME" >> $GITHUB_ENV
           echo "RESOURCE_GROUP_NAME_LOWER=$RESOURCE_GROUP_NAME_LOWER" >> $GITHUB_ENV
-          echo "PARAMETER_FILE=parameters/${{ matrix.environment }}.parameters.json" >> $GITHUB_ENV
+          echo "PARAMETER_FILE=parameters/development.parameters.json" >> $GITHUB_ENV
           echo $RESOURCE_GROUP_NAME_LOWER
 
       - name: Azure CLI script
@@ -38,7 +42,7 @@ jobs:
           inlineScript: |
             az account show
 
-      - name: Deploy Bicep template
+      - name: Deploy Bicep template - Deploy to Development
         env:
           RESOURCE_GROUP_NAME: ${{ env.RESOURCE_GROUP_NAME }}
           RESOURCE_GROUP_NAME_LOWER: ${{ env.RESOURCE_GROUP_NAME_LOWER }}
