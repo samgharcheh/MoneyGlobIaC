@@ -70,6 +70,12 @@ az group delete --name exampleGroup
 az ad sp create-for-rbac --name "YourSPName" --role contributor --scopes /subscriptions/yourSubscriptionId
 ```
 
+### or we can set it for the resource groups
+
+``` powershell
+az ad sp create-for-rbac --name {app-name} --role contributor --scopes /subscriptions/{subscription-id}/resourceGroups/exampleRG --json-auth
+```
+
 ## Run command
 
 ```powershell
