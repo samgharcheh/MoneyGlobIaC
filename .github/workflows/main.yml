@@ -24,9 +24,9 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Set environment variables - Deploy to ${{ job.environment.name }}
+      - name: Set environment variables
         env:
-          ENVIRONMENT_NAME: ${{ job.environment.name }}
+          ENVIRONMENT_NAME: ${{ github.ref_name == 'main' && 'Production' || github.ref_name == 'test' && 'Testing' || 'Development' }}
         run: |
           RESOURCE_GROUP_NAME="${{ vars.OWNER_NAME }}-${{ env.ENVIRONMENT_NAME }}-rg"
           RESOURCE_GROUP_NAME_LOWER=$(echo $RESOURCE_GROUP_NAME | tr '[:upper:]' '[:lower:]')
@@ -42,7 +42,7 @@ jobs:
           inlineScript: |
             az account show
 
-      - name: "Deploy Bicep template - Deploy to ${{ job.environment.name }}"
+      - name: Deploy Bicep template to Azure
         env:
           RESOURCE_GROUP_NAME: ${{ env.RESOURCE_GROUP_NAME }}
           RESOURCE_GROUP_NAME_LOWER: ${{ env.RESOURCE_GROUP_NAME_LOWER }}
@@ -55,4 +55,4 @@ jobs:
               --name $RESOURCE_GROUP_NAME_LOWER \
               --template-file ./bicep/main.bicep \
               --parameters ./bicep/main.bicepparam
-          echo "Deployment complete"
+          echo "Deployment to ${{env.RESOURCE_GROUP_NAME_LOWER}} complete"
